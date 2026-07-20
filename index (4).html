@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare affordable flights for students across hundreds of routes, currencies, and languages.">
+  <title>Farewell — Student Flight Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600;700;800&family=Shrikhand&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #152a39;
+      --paper: #f7f1e5;
+      --paper-deep: #e9dfcc;
+      --white: #fffdf8;
+      --coral: #ed725d;
+      --coral-dark: #c94e3c;
+      --green: #2f7057;
+      --yellow: #f2c45a;
+      --sky: #a9d9dd;
+      --line: rgba(21, 42, 57, .18);
+      --shadow: 8px 8px 0 var(--ink);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 4%, rgba(242, 196, 90, .32), transparent 23rem),
+        linear-gradient(rgba(21, 42, 57, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(21, 42, 57, .035) 1px, transparent 1px),
+        var(--paper);
+      background-size: auto, 28px 28px, 28px 28px, auto;
+      font-family: "Figtree", sans-serif;
+      line-height: 1.5;
+    }
+
+    button, input, select { font: inherit; }
+    button, select { cursor: pointer; }
+    a { color: inherit; }
+    svg { display: block; }
+    [hidden] { display: none !important; }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      opacity: .07;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    }
+
+    .nav {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: "Shrikhand", serif;
+      font-size: 1.75rem;
+      letter-spacing: .01em;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--ink);
+      border-radius: 50% 50% 44% 56%;
+      background: var(--coral);
+      transform: rotate(-7deg);
+    }
+
+    .brand-mark svg { width: 23px; transform: rotate(7deg); }
+
+    .nav-tools { display: flex; align-items: center; gap: 10px; }
+    .compact-select {
+      height: 42px;
+      max-width: 155px;
+      padding: 0 34px 0 13px;
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      color: var(--ink);
+      background: var(--white);
+      font-size: .84rem;
+      font-weight: 700;
+    }
+
+    main { overflow: hidden; }
+    .hero {
+      width: min(1180px, calc(100% - 36px));
+      min-height: 690px;
+      margin: 26px auto 0;
+      display: grid;
+      grid-template-columns: .88fr 1.12fr;
+      align-items: center;
+      gap: clamp(40px, 7vw, 90px);
+      position: relative;
+    }
+
+    .hero-copy { padding-bottom: 44px; position: relative; z-index: 2; }
+    .kicker {
+      width: fit-content;
+      margin: 0 0 22px;
+      padding: 8px 12px;
+      border: 1.5px solid var(--ink);
+      border-radius: 6px;
+      background: var(--yellow);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-family: "DM Mono", monospace;
+      font-size: .77rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transform: rotate(-1.5deg);
+      animation: rise .6s ease both;
+    }
+
+    h1 {
+      max-width: 670px;
+      margin: 0;
+      font-family: "Shrikhand", serif;
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      font-weight: 400;
+      line-height: .91;
+      letter-spacing: -.035em;
+      animation: rise .65s .08s ease both;
+    }
+
+    h1 span { color: var(--coral-dark); position: relative; white-space: nowrap; }
+    h1 span::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 5px;
+      height: 8px;
+      z-index: -1;
+      background: var(--yellow);
+      border-radius: 50%;
+      transform: rotate(-2deg);
+    }
+
+    .hero-lede {
+      max-width: 540px;
+      margin: 28px 0 0;
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: rgba(21, 42, 57, .78);
+      animation: rise .65s .16s ease both;
+    }
+
+    .student-proof {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      font-size: .9rem;
+      font-weight: 700;
+      animation: rise .65s .24s ease both;
+    }
+
+    .avatar-stack { display: flex; padding-left: 8px; }
+    .avatar {
+      width: 35px;
+      height: 35px;
+      margin-left: -8px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--paper);
+      border-radius: 50%;
+      color: var(--white);
+      background: var(--green);
+      font-size: .68rem;
+      font-weight: 800;
+    }
+    .avatar:nth-child(2) { background: var(--coral-dark); }
+    .avatar:nth-child(3) { background: #456ba0; }
+    .avatar:nth-child(4) { background: #8d633f; }
+
+    .search-wrap { position: relative; animation: rise .7s .13s ease both; }
+    .orbit {
+      position: absolute;
+      inset: -38px -42px auto auto;
+      width: 125px;
+      height: 125px;
+      z-index: -1;
+      border: 2px dashed var(--coral-dark);
+      border-radius: 50%;
+      animation: spin 24s linear infinite;
+    }
+    .orbit::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      left: 14px;
+      width: 17px;
+      height: 17px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--yellow);
+    }
+
+    .search-card {
+      position: relative;
+      padding: clamp(24px, 4vw, 38px);
+      border: 2px solid var(--ink);
+      border-radius: 30px 30px 30px 8px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .card-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 26px; }
+    .card-head h2 { margin: 0; font-size: clamp(1.25rem, 2vw, 1.65rem); line-height: 1.1; }
+    .card-head p { margin: 5px 0 0; color: rgba(21, 42, 57, .64); font-size: .86rem; }
+    .student-tag {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border: 1px solid var(--green);
+      border-radius: 99px;
+      color: var(--green);
+      background: rgba(47, 112, 87, .08);
+      font-family: "DM Mono", monospace;
+      font-size: .68rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .trip-tabs { display: flex; gap: 6px; margin-bottom: 22px; padding: 5px; border-radius: 14px; background: var(--paper); }
+    .trip-tabs label { flex: 1; }
+    .trip-tabs input { position: absolute; opacity: 0; pointer-events: none; }
+    .trip-tabs span {
+      min-height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid transparent;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: .88rem;
+      transition: .18s ease;
+    }
+    .trip-tabs input:checked + span { border-color: var(--ink); background: var(--white); box-shadow: 2px 2px 0 var(--ink); }
+    .trip-tabs input:focus-visible + span { outline: 3px solid rgba(237, 114, 93, .3); }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: 1fr 44px 1fr;
+      align-items: end;
+      gap: 9px;
+    }
+    .field { min-width: 0; }
+    .field label, .field-label {
+      display: block;
+      margin: 0 0 7px;
+      font-family: "DM Mono", monospace;
+      font-size: .69rem;
+      font-weight: 500;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .control {
+      width: 100%;
+      height: 56px;
+      padding: 0 15px;
+      border: 1.5px solid var(--ink);
+      border-radius: 12px;
+      color: var(--ink);
+      background: #fff;
+      font-size: .94rem;
+      font-weight: 600;
+      outline: none;
+      transition: box-shadow .18s, transform .18s, border-color .18s;
+    }
+    .control:focus { border-color: var(--coral-dark); box-shadow: 0 0 0 4px rgba(237, 114, 93, .16); transform: translateY(-1px); }
+    .control::placeholder { color: rgba(21, 42, 57, .42); font-weight: 500; }
+    .swap {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 6px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid var(--ink);
+      border-radius: 50%;
+      color: var(--ink);
+      background: var(--sky);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .swap:hover { transform: rotate(180deg); box-shadow: 2px 2px 0 var(--ink); }
+    .swap svg { width: 19px; }
+
+    .date-grid { display: grid; grid-template-columns: 1fr 1fr .72fr; gap: 10px; margin-top: 15px; }
+    .check-row { margin: 16px 0 0; display: flex; align-items: center; gap: 10px; font-size: .85rem; color: rgba(21, 42, 57, .72); }
+    .check-row input { width: 18px; height: 18px; accent-color: var(--green); }
+
+    .error {
+      margin: 14px 0 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--coral-dark);
+      border-radius: 6px;
+      color: #7f3026;
+      background: #fce5df;
+      font-size: .85rem;
+      font-weight: 700;
+    }
+
+    .search-button {
+      width: 100%;
+      min-height: 58px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 2px solid var(--ink);
+      border-radius: 13px;
+      color: var(--white);
+      background: var(--coral);
+      box-shadow: 4px 4px 0 var(--ink);
+      font-weight: 800;
+      transition: transform .15s, box-shadow .15s, background .15s;
+    }
+    .search-button:hover { background: var(--coral-dark); transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+    .search-button:active { transform: translate(4px, 4px); box-shadow: none; }
+    .search-button svg { width: 20px; }
+
+    .microcopy { margin: 13px 0 0; text-align: center; color: rgba(21, 42, 57, .55); font-size: .73rem; }
+    .tape {
+      position: absolute;
+      left: 50%;
+      bottom: -19px;
+      width: 125px;
+      height: 35px;
+      background: rgba(242, 196, 90, .74);
+      transform: translateX(-50%) rotate(-2deg);
+      clip-path: polygon(2% 7%, 98% 0, 94% 93%, 5% 100%);
+    }
+
+    .ticker { margin-top: 90px; border-block: 2px solid var(--ink); background: var(--green); color: var(--white); overflow: hidden; transform: rotate(-1deg) scale(1.02); }
+    .ticker-track { width: max-content; padding: 14px 0; display: flex; animation: marquee 30s linear infinite; }
+    .ticker span { padding: 0 30px; font-family: "DM Mono", monospace; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+    .ticker b { color: var(--yellow); }
+
+    .benefits {
+      width: min(1100px, calc(100% - 36px));
+      margin: 100px auto 120px;
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: clamp(36px, 7vw, 100px);
+      align-items: start;
+    }
+    .benefit-intro { position: sticky; top: 30px; }
+    .section-index { font-family: "DM Mono", monospace; color: var(--coral-dark); font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+    .benefit-intro h2 { margin: 13px 0 18px; font-family: "Shrikhand", serif; font-size: clamp(2.5rem, 5vw, 4.7rem); line-height: .95; font-weight: 400; }
+    .benefit-intro p { max-width: 420px; margin: 0; color: rgba(21, 42, 57, .67); }
+    .benefit-list { display: grid; gap: 16px; }
+    .benefit {
+      padding: 25px;
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 20px;
+      align-items: center;
+      border: 1.5px solid var(--ink);
+      border-radius: 18px;
+      background: var(--white);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .benefit:nth-child(2) { transform: translateX(24px); background: #e9f2ed; }
+    .benefit:nth-child(3) { transform: translateX(-12px); background: #f9e9e4; }
+    .benefit:hover { transform: translate(-4px, -4px); box-shadow: 6px 6px 0 var(--ink); }
+    .benefit:nth-child(2):hover { transform: translate(20px, -4px); }
+    .benefit:nth-child(3):hover { transform: translate(-16px, -4px); }
+    .benefit-icon { width: 60px; height: 60px; display: grid; place-items: center; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--yellow); }
+    .benefit-icon svg { width: 28px; }
+    .benefit h3 { margin: 0 0 5px; font-size: 1.1rem; }
+    .benefit p { margin: 0; color: rgba(21, 42, 57, .65); font-size: .9rem; }
+
+    .deals-section {
+      width: min(1100px, calc(100% - 36px));
+      margin: 90px auto;
+      text-align: center;
+    }
+    .deals-title {
+      margin: 13px 0 34px;
+      font-family: "Shrikhand", serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      line-height: 1.05;
+    }
+    .deals-widget-wrap {
+      padding: clamp(20px, 3vw, 32px);
+      border: 1.5px solid var(--ink);
+      border-radius: 24px;
+      background: var(--white);
+      box-shadow: 5px 5px 0 var(--ink);
+      min-height: 120px;
+    }
+    .deals-widget-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      text-align: left;
+    }
+    @media (max-width: 720px) {
+      .deals-widget-grid { grid-template-columns: 1fr; }
+    }
+
+    footer { border-top: 2px solid var(--ink); background: var(--ink); color: var(--paper); }
+    .footer-inner { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding: 35px 0; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .footer-inner p { margin: 0; font-size: .82rem; color: rgba(247, 241, 229, .68); }
+    .footer-stamp { padding: 7px 10px; border: 1px solid var(--paper); border-radius: 5px; font-family: "DM Mono", monospace; font-size: .7rem; text-transform: uppercase; transform: rotate(2deg); }
+
+    .results-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      padding: 24px;
+      display: grid;
+      place-items: center;
+      background: rgba(21, 42, 57, .76);
+      backdrop-filter: blur(8px);
+    }
+    .results-card {
+      width: min(620px, 100%);
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      position: relative;
+      padding: clamp(25px, 5vw, 42px);
+      border: 2px solid var(--ink);
+      border-radius: 24px 24px 24px 7px;
+      background: var(--paper);
+      box-shadow: 9px 9px 0 var(--coral);
+      animation: pop .3s ease both;
+    }
+    .close-results { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; display: grid; place-items: center; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--white); font-size: 1.25rem; }
+    .results-kicker { margin: 0 0 8px; color: var(--green); font-family: "DM Mono", monospace; font-size: .73rem; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; }
+    .results-card h2 { margin: 0; padding-right: 35px; font-family: "Shrikhand", serif; font-size: clamp(2rem, 7vw, 3.4rem); line-height: 1; font-weight: 400; }
+    .route-summary { margin: 25px 0; padding: 18px; border: 1.5px dashed var(--ink); border-radius: 14px; background: var(--white); }
+    .route-airports { display: flex; align-items: center; justify-content: space-between; gap: 15px; font-family: "DM Mono", monospace; font-size: clamp(1.25rem, 5vw, 2rem); font-weight: 500; }
+    .route-airports svg { width: 27px; color: var(--coral-dark); }
+    .route-meta { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .route-meta span { padding: 5px 8px; border-radius: 6px; background: var(--paper-deep); font-size: .74rem; font-weight: 700; }
+    .results-note { margin: 0 0 21px; color: rgba(21, 42, 57, .68); font-size: .9rem; }
+    .compare-link { min-height: 57px; display: flex; align-items: center; justify-content: center; gap: 9px; border: 2px solid var(--ink); border-radius: 12px; color: var(--white); background: var(--green); box-shadow: 4px 4px 0 var(--ink); text-decoration: none; font-weight: 800; }
+    .compare-link:hover { background: #245642; }
+    .compare-link svg { width: 19px; }
+
+    .also-compare-label { margin: 20px 0 10px; font-family: "DM Mono", monospace; font-size: .72rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: rgba(21, 42, 57, .55); }
+    .compare-links-secondary { display: grid; gap: 9px; }
+    .compare-link-secondary {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1.5px solid var(--ink);
+      border-radius: 12px;
+      color: var(--ink);
+      background: var(--white);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: .92rem;
+      transition: transform .15s, box-shadow .15s, background .15s;
+    }
+    .compare-link-secondary:hover { background: var(--paper); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+    .compare-link-secondary svg { width: 16px; opacity: .7; }
+
+    .price-preview {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border: 1.5px dashed var(--line);
+      border-radius: 14px;
+      background: rgba(169, 217, 221, .18);
+    }
+    .price-preview-loading { display: flex; align-items: center; gap: 10px; font-size: .87rem; color: rgba(21, 42, 57, .65); }
+    .mini-spinner {
+      width: 15px; height: 15px; border: 2px solid rgba(21, 42, 57, .2); border-top-color: var(--coral-dark);
+      border-radius: 50%; display: inline-block; animation: spin .8s linear infinite;
+    }
+    @media (prefers-reduced-motion: reduce) { .mini-spinner { animation: none; } }
+    .price-preview-result { display: flex; flex-direction: column; gap: 2px; }
+    .price-preview-label { font-family: "DM Mono", monospace; font-size: .68rem; letter-spacing: .07em; text-transform: uppercase; color: rgba(21, 42, 57, .55); }
+    .price-preview-amount { font-family: "Shrikhand", serif; font-size: 1.8rem; color: var(--coral-dark); }
+    .price-preview-note { font-size: .76rem; color: rgba(21, 42, 57, .55); }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    @keyframes pop { from { opacity: 0; transform: scale(.96) translateY(14px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+    html[dir="rtl"] .route-grid, html[dir="rtl"] .date-grid { direction: rtl; }
+    html[dir="rtl"] .error { border-left: 0; border-right: 4px solid var(--coral-dark); }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; margin-top: 35px; }
+      .hero-copy { padding-bottom: 0; }
+      h1 { max-width: 800px; }
+      .search-wrap { width: min(680px, 100%); margin: 0 auto; }
+      .benefits { grid-template-columns: 1fr; }
+      .benefit-intro { position: static; }
+    }
+
+    @media (max-width: 620px) {
+      .nav { width: min(100% - 24px, 1180px); padding-top: 14px; align-items: flex-start; }
+      .brand { font-size: 1.45rem; }
+      .brand-mark { width: 36px; height: 36px; }
+      .nav-tools { display: grid; grid-template-columns: 1fr; gap: 6px; }
+      .compact-select { height: 36px; max-width: 125px; font-size: .72rem; }
+      .hero { width: min(100% - 24px, 1180px); min-height: auto; gap: 42px; }
+      h1 { font-size: clamp(3.1rem, 16vw, 5rem); }
+      .search-card { padding: 20px; box-shadow: 5px 5px 0 var(--ink); }
+      .card-head { align-items: flex-start; }
+      .student-tag { display: none; }
+      .route-grid { grid-template-columns: 1fr; }
+      .swap { margin: -3px auto; transform: rotate(90deg); }
+      .swap:hover { transform: rotate(270deg); }
+      .date-grid { grid-template-columns: 1fr 1fr; }
+      .passenger-field { grid-column: 1 / -1; }
+      .ticker { margin-top: 75px; }
+      .benefits { width: min(100% - 24px, 1100px); margin: 80px auto; }
+      .benefit, .benefit:nth-child(2), .benefit:nth-child(3) { grid-template-columns: 48px 1fr; padding: 18px; gap: 14px; transform: none; }
+      .benefit:nth-child(2):hover, .benefit:nth-child(3):hover { transform: translate(-3px, -3px); }
+      .benefit-icon { width: 48px; height: 48px; }
+      .benefit-icon svg { width: 23px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+      .results-panel { padding: 12px; }
+      .results-card { max-height: calc(100vh - 24px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="nav">
+    <a class="brand" href="#top" aria-label="Farewell home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 14.4 21 5l-6.2 14-3.5-5.2L3 14.4Z" fill="#fffdf8" stroke="#152a39" stroke-width="1.5" stroke-linejoin="round"/><path d="m11.3 13.8 3.5-3.4" stroke="#152a39" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </span>
+      Farewell
+    </a>
+    <div class="nav-tools">
+      <label>
+        <span class="field-label" hidden>Language</span>
+        <select class="compact-select" id="languageSelect" aria-label="Language"></select>
+      </label>
+      <label>
+        <span class="field-label" hidden>Currency</span>
+        <select class="compact-select" id="currencySelect" aria-label="Currency"></select>
+      </label>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <p class="kicker" data-i18n="kicker">Made for students going places</p>
+        <h1 id="heroTitle"><span data-i18n="headlineAccent">Big trips.</span><br><span data-i18n="headlineRest" style="color:var(--ink)">Smaller fares.</span></h1>
+        <p class="hero-lede" data-i18n="lede">Compare routes from campus to anywhere, then jump to live fares in your chosen currency.</p>
+        <div class="student-proof">
+          <div class="avatar-stack" aria-hidden="true">
+            <span class="avatar">AK</span><span class="avatar">LM</span><span class="avatar">ZS</span><span class="avatar">NO</span>
+          </div>
+          <span data-i18n="proof">Built around student budgets, not business class.</span>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <div class="orbit" aria-hidden="true"></div>
+        <form class="search-card" id="flightForm" novalidate>
+          <div class="card-head">
+            <div>
+              <h2 data-i18n="searchTitle">Where are you headed?</h2>
+              <p data-i18n="searchSub">Search 70+ popular student airports.</p>
+            </div>
+            <span class="student-tag">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="m3 9 9-5 9 5-9 5-9-5Z" stroke="currentColor" stroke-width="2"/><path d="M7 12v5c3 2 7 2 10 0v-5" stroke="currentColor" stroke-width="2"/></svg>
+              <span data-i18n="studentMode">Student mode</span>
+            </span>
+          </div>
+
+          <div class="trip-tabs" role="radiogroup" aria-label="Trip type">
+            <label><input type="radio" name="tripType" value="roundtrip" checked><span data-i18n="roundTrip">Round trip</span></label>
+            <label><input type="radio" name="tripType" value="oneway"><span data-i18n="oneWay">One way</span></label>
+          </div>
+
+          <div class="route-grid">
+            <div class="field">
+              <label for="fromAirport" data-i18n="from">From</label>
+              <input class="control" id="fromAirport" list="airportList" autocomplete="off" placeholder="City or airport" data-i18n-placeholder="airportPlaceholder" required>
+            </div>
+            <button class="swap" id="swapAirports" type="button" aria-label="Swap airports">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 7h13m0 0-3-3m3 3-3 3M17 17H4m0 0 3 3m-3-3 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="field">
+              <label for="toAirport" data-i18n="to">To</label>
+              <input class="control" id="toAirport" list="airportList" autocomplete="off" placeholder="City or airport" data-i18n-placeholder="airportPlaceholder" required>
+            </div>
+          </div>
+          <datalist id="airportList"></datalist>
+
+          <div class="date-grid">
+            <div class="field">
+              <label for="departDate" data-i18n="depart">Depart</label>
+              <input class="control" id="departDate" type="date" required>
+            </div>
+            <div class="field" id="returnField">
+              <label for="returnDate" data-i18n="return">Return</label>
+              <input class="control" id="returnDate" type="date" required>
+            </div>
+            <div class="field passenger-field">
+              <label for="passengers" data-i18n="travelers">Travelers</label>
+              <select class="control" id="passengers">
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="check-row"><input id="flexibleDates" type="checkbox"><span data-i18n="flexible">My dates are flexible — show nearby days</span></label>
+          <div class="error" id="formError" role="alert" hidden></div>
+          <button class="search-button" type="submit">
+            <span data-i18n="searchButton">Compare affordable flights</span>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <p class="microcopy" data-i18n="microcopy">No booking fees from us. We send you to live provider results.</p>
+          <span class="tape" aria-hidden="true"></span>
+        </form>
+      </div>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span><b>JFK</b> New York</span><span><b>LHR</b> London</span><span><b>DEL</b> Delhi</span><span><b>LOS</b> Lagos</span><span><b>SYD</b> Sydney</span><span><b>YYZ</b> Toronto</span><span><b>DXB</b> Dubai</span><span><b>GRU</b> São Paulo</span>
+        <span><b>JFK</b> New York</span><span><b>LHR</b> London</span><span><b>DEL</b> Delhi</span><span><b>LOS</b> Lagos</span><span><b>SYD</b> Sydney</span><span><b>YYZ</b> Toronto</span><span><b>DXB</b> Dubai</span><span><b>GRU</b> São Paulo</span>
+      </div>
+    </div>
+
+    <section class="deals-section" aria-labelledby="dealsTitle">
+      <p class="section-index">02 / Live from our partners</p>
+      <h2 id="dealsTitle" class="deals-title">Deals people are booking right now.</h2>
+      <div class="deals-widget-wrap">
+        <script async src="https://tpwgts.com/content?currency=usd&trs=552080&shmarker=752841&locale=en&powered_by=true&limit=4&primary_color=00AE98&results_background_color=FFFFFF&form_background_color=FFFFFF&promo_id=4563&campaign_id=111" charset="utf-8"></script>
+      </div>
+    </section>
+
+    <section class="deals-section" aria-labelledby="moreToolsTitle">
+      <p class="section-index">03 / More ways to search</p>
+      <h2 id="moreToolsTitle" class="deals-title">Search flights and hotels together.</h2>
+      <div class="deals-widget-grid">
+        <div class="deals-widget-wrap">
+          <script async src="https://tpwgts.com/content?currency=usd&trs=552080&shmarker=752841&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%2332a8dd&color_icons=%2332a8dd&dark=%23262626&light=%23FFFFFF&secondary=%23FFFFFF&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=0&plain=false&promo_id=7879&campaign_id=100" charset="utf-8"></script>
+        </div>
+        <div class="deals-widget-wrap">
+          <script async src="https://tpwgts.com/content?trs=552080&shmarker=752841&locale=en&border_radius=5&plain=true&powered_by=true&promo_id=3408&campaign_id=86" charset="utf-8"></script>
+        </div>
+      </div>
+    </section>
+
+    <section class="benefits" aria-labelledby="benefitsTitle">
+      <div class="benefit-intro">
+        <span class="section-index" data-i18n="whyLabel">01 / Why Farewell</span>
+        <h2 id="benefitsTitle" data-i18n="whyTitle">More money for the trip.</h2>
+        <p data-i18n="whyText">A simple launchpad for comparing student-friendly routes without wrestling with confusing travel sites.</p>
+      </div>
+      <div class="benefit-list">
+        <article class="benefit">
+          <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M7 3v4m10-4v4M5 11h3m3 0h3m3 0h2M5 15h3m3 0h3m3 0h2M5 19h3m3 0h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/></svg></span>
+          <div><h3 data-i18n="benefitOneTitle">Flexible-date friendly</h3><p data-i18n="benefitOneText">Shift your travel days and look around semester breaks for better value.</p></div>
+        </article>
+        <article class="benefit">
+          <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.3 2.5 3.5 5.5 3.5 9s-1.2 6.5-3.5 9c-2.3-2.5-3.5-5.5-3.5-9S9.7 5.5 12 3Z" stroke="currentColor" stroke-width="1.8"/></svg></span>
+          <div><h3 data-i18n="benefitTwoTitle">Built for international students</h3><p data-i18n="benefitTwoText">Choose from major university hubs, global currencies, and 13 interface languages.</p></div>
+        </article>
+        <article class="benefit">
+          <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 17.5 20 5l-5.8 14-3.1-5L4 17.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m11.1 14 3.2-3.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <div><h3 data-i18n="benefitThreeTitle">Straight to live prices</h3><p data-i18n="benefitThreeText">Set your route once, then continue to current comparison results when you are ready.</p></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p data-i18n="footer">Farewell helps students start a flight search. Prices and bookings are completed with the comparison provider.</p>
+      <span class="footer-stamp" data-i18n="stamp">Pack light · go far</span>
+    </div>
+  </footer>
+
+  <section class="results-panel" id="resultsPanel" role="dialog" aria-modal="true" aria-labelledby="resultsTitle" hidden>
+    <div class="results-card">
+      <button class="close-results" id="closeResults" type="button" aria-label="Close">×</button>
+      <p class="results-kicker" data-i18n="resultsKicker">Your search is packed</p>
+      <h2 id="resultsTitle" data-i18n="resultsTitle">Ready for live fares.</h2>
+      <div class="route-summary">
+        <div class="route-airports"><strong id="resultFrom">JFK</strong><svg viewBox="0 0 24 24" fill="none"><path d="M3 14.4 21 5l-6.2 14-3.5-5.2L3 14.4Z" fill="currentColor"/><path d="m11.3 13.8 3.5-3.4" stroke="#f7f1e5" stroke-width="1.5"/></svg><strong id="resultTo">LHR</strong></div>
+        <div class="route-meta"><span id="resultDates"></span><span id="resultTravelers"></span><span id="resultCurrency"></span></div>
+      </div>
+      <p class="results-note" data-i18n="resultsNote">Continue to compare current airline and agency options. The final price is shown by the provider.</p>
+
+      <div class="price-preview" id="pricePreview" hidden>
+        <div class="price-preview-loading" id="pricePreviewLoading">
+          <span class="mini-spinner" aria-hidden="true"></span>
+          <span>Checking recent prices…</span>
+        </div>
+        <div class="price-preview-result" id="pricePreviewResult" hidden>
+          <span class="price-preview-label">Recently seen from</span>
+          <span class="price-preview-amount" id="pricePreviewAmount">—</span>
+          <span class="price-preview-note" id="pricePreviewNote"></span>
+        </div>
+      </div>
+
+      <a class="compare-link" id="compareLink" href="#" target="_blank" rel="noopener noreferrer">
+        <span data-i18n="continueButton">Open live flight results</span>
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
+      <p class="also-compare-label" id="alsoCompareLabel">Also compare on</p>
+      <div class="compare-links-secondary">
+        <a class="compare-link-secondary" id="googleFlightsLink" href="#" target="_blank" rel="noopener noreferrer">
+          <span>Google Flights</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="compare-link-secondary" id="kayakLink" href="#" target="_blank" rel="noopener noreferrer">
+          <span>Kayak</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="compare-link-secondary" id="kiwiLink" href="#" target="_blank" rel="noopener noreferrer">
+          <span>Kiwi.com</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const airports = [
+      ["ATL","Atlanta","Hartsfield–Jackson"],["AUS","Austin","Austin–Bergstrom"],["BOS","Boston","Logan"],["BWI","Baltimore","Baltimore/Washington"],["CLT","Charlotte","Douglas"],["DCA","Washington, D.C.","Reagan"],["DEN","Denver","Denver International"],["DFW","Dallas","Dallas/Fort Worth"],["DTW","Detroit","Metropolitan Wayne"],["EWR","Newark","Newark Liberty"],["FLL","Fort Lauderdale","Fort Lauderdale–Hollywood"],["IAD","Washington, D.C.","Dulles"],["IAH","Houston","George Bush"],["JFK","New York","John F. Kennedy"],["LAS","Las Vegas","Harry Reid"],["LAX","Los Angeles","Los Angeles International"],["MCO","Orlando","Orlando International"],["MIA","Miami","Miami International"],["MSP","Minneapolis","Saint Paul"],["ORD","Chicago","O'Hare"],["PDX","Portland","Portland International"],["PHL","Philadelphia","Philadelphia International"],["PHX","Phoenix","Sky Harbor"],["SAN","San Diego","San Diego International"],["SEA","Seattle","Seattle–Tacoma"],["SFO","San Francisco","San Francisco International"],["SJC","San Jose","Norman Y. Mineta"],["SLC","Salt Lake City","Salt Lake City International"],["TPA","Tampa","Tampa International"],
+      ["YYZ","Toronto","Pearson"],["YVR","Vancouver","Vancouver International"],["YUL","Montréal","Montréal–Trudeau"],["MEX","Mexico City","Benito Juárez"],["CUN","Cancún","Cancún International"],["GRU","São Paulo","Guarulhos"],["GIG","Rio de Janeiro","Galeão"],["BOG","Bogotá","El Dorado"],["LIM","Lima","Jorge Chávez"],["SCL","Santiago","Arturo Merino Benítez"],["EZE","Buenos Aires","Ezeiza"],
+      ["LHR","London","Heathrow"],["LGW","London","Gatwick"],["MAN","Manchester","Manchester Airport"],["EDI","Edinburgh","Edinburgh Airport"],["DUB","Dublin","Dublin Airport"],["CDG","Paris","Charles de Gaulle"],["ORY","Paris","Orly"],["AMS","Amsterdam","Schiphol"],["FRA","Frankfurt","Frankfurt Airport"],["MUC","Munich","Munich Airport"],["BER","Berlin","Brandenburg"],["MAD","Madrid","Adolfo Suárez"],["BCN","Barcelona","El Prat"],["LIS","Lisbon","Humberto Delgado"],["FCO","Rome","Fiumicino"],["MXP","Milan","Malpensa"],["VIE","Vienna","Vienna International"],["ZRH","Zürich","Zürich Airport"],["CPH","Copenhagen","Kastrup"],["ARN","Stockholm","Arlanda"],["OSL","Oslo","Gardermoen"],["ATH","Athens","Athens International"],["IST","Istanbul","Istanbul Airport"],["WAW","Warsaw","Chopin"],["PRG","Prague","Václav Havel"],["BUD","Budapest","Ferenc Liszt"],
+      ["DXB","Dubai","Dubai International"],["DOH","Doha","Hamad International"],["AUH","Abu Dhabi","Zayed International"],["CAI","Cairo","Cairo International"],["CMN","Casablanca","Mohammed V"],["ACC","Accra","Kotoka"],["LOS","Lagos","Murtala Muhammed"],["NBO","Nairobi","Jomo Kenyatta"],["JNB","Johannesburg","O. R. Tambo"],["CPT","Cape Town","Cape Town International"],["ADD","Addis Ababa","Bole"],
+      ["DEL","Delhi","Indira Gandhi"],["BOM","Mumbai","Chhatrapati Shivaji"],["BLR","Bengaluru","Kempegowda"],["HYD","Hyderabad","Rajiv Gandhi"],["MAA","Chennai","Chennai International"],["CCU","Kolkata","Netaji Subhas Chandra Bose"],["DAC","Dhaka","Hazrat Shahjalal"],["KHI","Karachi","Jinnah"],["LHE","Lahore","Allama Iqbal"],["ISB","Islamabad","Islamabad International"],["CMB","Colombo","Bandaranaike"],["KTM","Kathmandu","Tribhuvan"],
+      ["SIN","Singapore","Changi"],["KUL","Kuala Lumpur","Kuala Lumpur International"],["BKK","Bangkok","Suvarnabhumi"],["HKG","Hong Kong","Hong Kong International"],["PEK","Beijing","Capital"],["PVG","Shanghai","Pudong"],["CAN","Guangzhou","Baiyun"],["NRT","Tokyo","Narita"],["HND","Tokyo","Haneda"],["ICN","Seoul","Incheon"],["TPE","Taipei","Taoyuan"],["MNL","Manila","Ninoy Aquino"],["CGK","Jakarta","Soekarno–Hatta"],["SGN","Ho Chi Minh City","Tân Sơn Nhất"],["HAN","Hanoi","Nội Bài"],
+      ["SYD","Sydney","Kingsford Smith"],["MEL","Melbourne","Melbourne Airport"],["BNE","Brisbane","Brisbane Airport"],["PER","Perth","Perth Airport"],["AKL","Auckland","Auckland Airport"]
+    ];
+
+    const currencies = [
+      ["USD","US Dollar"],["EUR","Euro"],["GBP","British Pound"],["CAD","Canadian Dollar"],["AUD","Australian Dollar"],["NZD","New Zealand Dollar"],["INR","Indian Rupee"],["CNY","Chinese Yuan"],["JPY","Japanese Yen"],["KRW","South Korean Won"],["SGD","Singapore Dollar"],["HKD","Hong Kong Dollar"],["AED","UAE Dirham"],["SAR","Saudi Riyal"],["QAR","Qatari Riyal"],["NGN","Nigerian Naira"],["GHS","Ghanaian Cedi"],["ZAR","South African Rand"],["KES","Kenyan Shilling"],["BRL","Brazilian Real"],["MXN","Mexican Peso"],["COP","Colombian Peso"],["TRY","Turkish Lira"],["CHF","Swiss Franc"],["SEK","Swedish Krona"],["NOK","Norwegian Krone"],["DKK","Danish Krone"],["PLN","Polish Złoty"],["PKR","Pakistani Rupee"],["BDT","Bangladeshi Taka"]
+    ];
+
+    const translations = {
+      en: { name:"English", kicker:"Made for students going places", headlineAccent:"Big trips.", headlineRest:"Smaller fares.", lede:"Compare routes from campus to anywhere, then jump to live fares in your chosen currency.", proof:"Built around student budgets, not business class.", searchTitle:"Where are you headed?", searchSub:"Search 100+ popular student airports.", studentMode:"Student mode", roundTrip:"Round trip", oneWay:"One way", multiCity:"Multi-city", from:"From", to:"To", airportPlaceholder:"City or airport", depart:"Depart", return:"Return", travelers:"Travelers", flexible:"My dates are flexible — show nearby days", searchButton:"Compare affordable flights", microcopy:"No booking fees from us. We send you to live provider results.", whyLabel:"01 / Why Farewell", whyTitle:"More money for the trip.", whyText:"A simple launchpad for comparing student-friendly routes without wrestling with confusing travel sites.", benefitOneTitle:"Flexible-date friendly", benefitOneText:"Shift your travel days and look around semester breaks for better value.", benefitTwoTitle:"Built for international students", benefitTwoText:"Choose from major university hubs, global currencies, and 13 interface languages.", benefitThreeTitle:"Straight to live prices", benefitThreeText:"Set your route once, then continue to current comparison results when you are ready.", footer:"Farewell helps students start a flight search. Prices and bookings are completed with the comparison provider.", stamp:"Pack light · go far", resultsKicker:"Your search is packed", resultsTitle:"Ready for live fares.", resultsNote:"Continue to compare current airline and agency options. The final price is shown by the provider.", continueButton:"Open live flight results", invalidAirport:"Choose an airport from the list or enter a valid 3-letter airport code.", sameAirport:"Departure and arrival airports must be different.", invalidDates:"Choose valid travel dates. Your return must be after departure.", travelerWord:"traveler", travelersWord:"travelers", flexibleWord:"Flexible dates" },
+      es: { name:"Español", kicker:"Hecho para estudiantes viajeros", headlineAccent:"Grandes viajes.", headlineRest:"Tarifas pequeñas.", lede:"Compara rutas desde tu campus a cualquier lugar y consulta precios en tu moneda.", proof:"Pensado para presupuestos estudiantiles, no para clase ejecutiva.", searchTitle:"¿A dónde vas?", searchSub:"Busca en más de 100 aeropuertos populares.", studentMode:"Modo estudiante", roundTrip:"Ida y vuelta", oneWay:"Solo ida", multiCity:"Varias ciudades", from:"Desde", to:"Hasta", airportPlaceholder:"Ciudad o aeropuerto", depart:"Salida", return:"Regreso", travelers:"Viajeros", flexible:"Mis fechas son flexibles", searchButton:"Comparar vuelos económicos", microcopy:"Sin cargos nuestros. Te llevamos a resultados en vivo.", whyLabel:"01 / Por qué Farewell", whyTitle:"Más dinero para el viaje.", whyText:"Una forma sencilla de comparar rutas para estudiantes.", benefitOneTitle:"Fechas flexibles", benefitOneText:"Cambia tus días y busca cerca de las vacaciones académicas.", benefitTwoTitle:"Para estudiantes internacionales", benefitTwoText:"Aeropuertos globales, muchas monedas y 12 idiomas.", benefitThreeTitle:"Precios en vivo", benefitThreeText:"Configura tu ruta y abre resultados actuales.", footer:"Farewell inicia tu búsqueda. La reserva se completa con el proveedor.", stamp:"Viaja ligero · llega lejos", resultsKicker:"Tu búsqueda está lista", resultsTitle:"Listo para ver tarifas.", resultsNote:"Continúa para comparar opciones actuales. El proveedor muestra el precio final.", continueButton:"Abrir resultados en vivo", invalidAirport:"Elige un aeropuerto de la lista o escribe un código válido de 3 letras.", sameAirport:"Los aeropuertos deben ser diferentes.", invalidDates:"Elige fechas válidas. El regreso debe ser posterior.", travelerWord:"viajero", travelersWord:"viajeros", flexibleWord:"Fechas flexibles" },
+      fr: { name:"Français", kicker:"Pour les étudiants qui voyagent", headlineAccent:"Grands voyages.", headlineRest:"Petits prix.", lede:"Comparez des itinéraires depuis votre campus et consultez les tarifs dans votre devise.", proof:"Pensé pour les budgets étudiants, pas la classe affaires.", searchTitle:"Où allez-vous ?", searchSub:"Recherchez plus de 100 aéroports étudiants.", studentMode:"Mode étudiant", roundTrip:"Aller-retour", oneWay:"Aller simple", multiCity:"Multi-destinations", from:"De", to:"À", airportPlaceholder:"Ville ou aéroport", depart:"Départ", return:"Retour", travelers:"Voyageurs", flexible:"Mes dates sont flexibles", searchButton:"Comparer les vols abordables", microcopy:"Aucuns frais de notre part. Accédez aux résultats en direct.", whyLabel:"01 / Pourquoi Farewell", whyTitle:"Plus d’argent pour le voyage.", whyText:"Un point de départ simple pour comparer les itinéraires étudiants.", benefitOneTitle:"Dates flexibles", benefitOneText:"Décalez vos dates autour des vacances universitaires.", benefitTwoTitle:"Pour les étudiants internationaux", benefitTwoText:"Aéroports mondiaux, nombreuses devises et 12 langues.", benefitThreeTitle:"Prix en direct", benefitThreeText:"Définissez votre trajet puis ouvrez les résultats actuels.", footer:"Farewell lance votre recherche. La réservation se fait chez le fournisseur.", stamp:"Voyagez léger · allez loin", resultsKicker:"Votre recherche est prête", resultsTitle:"Prêt pour les tarifs.", resultsNote:"Comparez les options actuelles. Le prix final est affiché par le fournisseur.", continueButton:"Ouvrir les résultats", invalidAirport:"Choisissez un aéroport ou saisissez un code valide à 3 lettres.", sameAirport:"Les aéroports doivent être différents.", invalidDates:"Choisissez des dates valides. Le retour doit suivre le départ.", travelerWord:"voyageur", travelersWord:"voyageurs", flexibleWord:"Dates flexibles" },
+      de: { name:"Deutsch", kicker:"Für Studierende mit Fernweh", headlineAccent:"Große Reisen.", headlineRest:"Kleine Preise.", lede:"Vergleiche Strecken vom Campus in die Welt und öffne Live-Preise in deiner Währung.", proof:"Für studentische Budgets, nicht für Business Class.", searchTitle:"Wohin geht es?", searchSub:"Durchsuche über 100 beliebte Flughäfen.", studentMode:"Studentenmodus", roundTrip:"Hin und zurück", oneWay:"Nur Hinflug", multiCity:"Mehrere Städte", from:"Von", to:"Nach", airportPlaceholder:"Stadt oder Flughafen", depart:"Abflug", return:"Rückflug", travelers:"Reisende", flexible:"Meine Daten sind flexibel", searchButton:"Günstige Flüge vergleichen", microcopy:"Keine Gebühren von uns. Weiter zu Live-Ergebnissen.", whyLabel:"01 / Warum Farewell", whyTitle:"Mehr Geld für die Reise.", whyText:"Ein einfacher Startpunkt für studentische Flugrouten.", benefitOneTitle:"Flexible Reisedaten", benefitOneText:"Verschiebe deine Tage rund um die Semesterferien.", benefitTwoTitle:"Für internationale Studierende", benefitTwoText:"Globale Flughäfen, viele Währungen und 12 Sprachen.", benefitThreeTitle:"Direkt zu Live-Preisen", benefitThreeText:"Route festlegen und aktuelle Ergebnisse öffnen.", footer:"Farewell startet die Suche. Buchung und Preise kommen vom Anbieter.", stamp:"Leicht packen · weit reisen", resultsKicker:"Deine Suche ist bereit", resultsTitle:"Bereit für Live-Preise.", resultsNote:"Vergleiche aktuelle Optionen. Den Endpreis zeigt der Anbieter.", continueButton:"Live-Ergebnisse öffnen", invalidAirport:"Wähle einen Flughafen oder gib einen gültigen 3-Buchstaben-Code ein.", sameAirport:"Start und Ziel müssen verschieden sein.", invalidDates:"Wähle gültige Daten. Der Rückflug muss später sein.", travelerWord:"Reisender", travelersWord:"Reisende", flexibleWord:"Flexible Daten" },
+      pt: { name:"Português", kicker:"Feito para estudantes viajantes", headlineAccent:"Grandes viagens.", headlineRest:"Preços menores.", lede:"Compare rotas do campus para qualquer lugar e veja tarifas na sua moeda.", proof:"Pensado para orçamentos estudantis, não classe executiva.", searchTitle:"Para onde você vai?", searchSub:"Busque em mais de 100 aeroportos populares.", studentMode:"Modo estudante", roundTrip:"Ida e volta", oneWay:"Só ida", multiCity:"Várias cidades", from:"De", to:"Para", airportPlaceholder:"Cidade ou aeroporto", depart:"Partida", return:"Volta", travelers:"Viajantes", flexible:"Minhas datas são flexíveis", searchButton:"Comparar voos baratos", microcopy:"Sem taxas nossas. Abrimos resultados ao vivo.", whyLabel:"01 / Por que Farewell", whyTitle:"Mais dinheiro para a viagem.", whyText:"Um jeito simples de comparar rotas para estudantes.", benefitOneTitle:"Datas flexíveis", benefitOneText:"Mude seus dias perto das férias acadêmicas.", benefitTwoTitle:"Para estudantes internacionais", benefitTwoText:"Aeroportos globais, muitas moedas e 12 idiomas.", benefitThreeTitle:"Preços ao vivo", benefitThreeText:"Defina sua rota e abra resultados atuais.", footer:"Farewell inicia a busca. A reserva acontece com o provedor.", stamp:"Leve pouco · vá longe", resultsKicker:"Sua busca está pronta", resultsTitle:"Pronto para ver tarifas.", resultsNote:"Compare opções atuais. O preço final é mostrado pelo provedor.", continueButton:"Abrir resultados ao vivo", invalidAirport:"Escolha um aeroporto ou digite um código válido de 3 letras.", sameAirport:"Os aeroportos devem ser diferentes.", invalidDates:"Escolha datas válidas. A volta deve ser posterior.", travelerWord:"viajante", travelersWord:"viajantes", flexibleWord:"Datas flexíveis" },
+      it: { name:"Italiano", kicker:"Per studenti sempre in viaggio", headlineAccent:"Grandi viaggi.", headlineRest:"Piccoli prezzi.", lede:"Confronta rotte dal campus al mondo e guarda tariffe nella tua valuta.", proof:"Pensato per budget da studenti, non per la business class.", searchTitle:"Dove sei diretto?", searchSub:"Cerca oltre 100 aeroporti popolari.", studentMode:"Modalità studente", roundTrip:"Andata e ritorno", oneWay:"Solo andata", multiCity:"Più città", from:"Da", to:"A", airportPlaceholder:"Città o aeroporto", depart:"Partenza", return:"Ritorno", travelers:"Viaggiatori", flexible:"Le mie date sono flessibili", searchButton:"Confronta voli convenienti", microcopy:"Nessun costo da parte nostra. Vai ai risultati live.", whyLabel:"01 / Perché Farewell", whyTitle:"Più soldi per il viaggio.", whyText:"Un modo semplice per confrontare rotte per studenti.", benefitOneTitle:"Date flessibili", benefitOneText:"Sposta le date intorno alle vacanze universitarie.", benefitTwoTitle:"Per studenti internazionali", benefitTwoText:"Aeroporti globali, molte valute e 12 lingue.", benefitThreeTitle:"Prezzi in tempo reale", benefitThreeText:"Imposta la rotta e apri i risultati attuali.", footer:"Farewell avvia la ricerca. La prenotazione avviene con il fornitore.", stamp:"Viaggia leggero · vai lontano", resultsKicker:"La ricerca è pronta", resultsTitle:"Pronto per le tariffe.", resultsNote:"Confronta opzioni attuali. Il prezzo finale è del fornitore.", continueButton:"Apri risultati live", invalidAirport:"Scegli un aeroporto o inserisci un codice valido di 3 lettere.", sameAirport:"Gli aeroporti devono essere diversi.", invalidDates:"Scegli date valide. Il ritorno deve essere successivo.", travelerWord:"viaggiatore", travelersWord:"viaggiatori", flexibleWord:"Date flessibili" },
+      zh: { name:"中文", kicker:"为出发的留学生而做", headlineAccent:"旅程更远。", headlineRest:"票价更低。", lede:"比较从校园到世界各地的航线，并用你的货币查看实时票价。", proof:"为学生预算设计，不为商务舱。", searchTitle:"你要去哪里？", searchSub:"搜索 100 多个热门机场。", studentMode:"学生模式", roundTrip:"往返", oneWay:"单程", multiCity:"多城市", from:"出发地", to:"目的地", airportPlaceholder:"城市或机场", depart:"出发", return:"返回", travelers:"旅客", flexible:"我的日期可以调整", searchButton:"比较实惠航班", microcopy:"我们不收预订费。继续查看实时结果。", whyLabel:"01 / 为什么选择 Farewell", whyTitle:"把更多钱留给旅行。", whyText:"轻松比较适合学生的国际航线。", benefitOneTitle:"灵活日期", benefitOneText:"在学期假期前后调整日期寻找更好价格。", benefitTwoTitle:"为国际学生打造", benefitTwoText:"全球机场、多种货币和 12 种语言。", benefitThreeTitle:"直达实时价格", benefitThreeText:"设置航线并打开当前比较结果。", footer:"Farewell 帮你开始搜索，价格和预订由供应商完成。", stamp:"轻装 · 远行", resultsKicker:"搜索已准备好", resultsTitle:"查看实时票价。", resultsNote:"继续比较当前选项。最终价格由供应商显示。", continueButton:"打开实时结果", invalidAirport:"请选择机场或输入有效的三字母机场代码。", sameAirport:"出发和到达机场必须不同。", invalidDates:"请选择有效日期，返程必须晚于出发。", travelerWord:"位旅客", travelersWord:"位旅客", flexibleWord:"灵活日期" },
+      ja: { name:"日本語", kicker:"旅する学生のために", headlineAccent:"大きな旅。", headlineRest:"小さな運賃。", lede:"キャンパスから世界へのルートを比較し、選んだ通貨で最新運賃を確認。", proof:"ビジネスクラスではなく、学生予算のために。", searchTitle:"どこへ行きますか？", searchSub:"100以上の人気空港を検索。", studentMode:"学生モード", roundTrip:"往復", oneWay:"片道", multiCity:"複数都市", from:"出発地", to:"目的地", airportPlaceholder:"都市または空港", depart:"出発", return:"帰国", travelers:"旅行者", flexible:"日付は調整可能です", searchButton:"お得な航空券を比較", microcopy:"当サイトの予約手数料はありません。最新結果へ進みます。", whyLabel:"01 / Farewell の特徴", whyTitle:"旅にもっとお金を。", whyText:"学生向けルートを簡単に比較できます。", benefitOneTitle:"柔軟な日付", benefitOneText:"学期休暇の前後に日付をずらして検索。", benefitTwoTitle:"留学生のために", benefitTwoText:"世界の空港、多通貨、12言語に対応。", benefitThreeTitle:"最新価格へ", benefitThreeText:"ルートを設定して現在の結果を開きます。", footer:"Farewell は検索を開始します。予約は提供元で完了します。", stamp:"身軽に · 遠くへ", resultsKicker:"検索準備完了", resultsTitle:"最新運賃を見る。", resultsNote:"現在の選択肢を比較。最終価格は提供元で表示されます。", continueButton:"最新結果を開く", invalidAirport:"空港を選ぶか、有効な3文字の空港コードを入力してください。", sameAirport:"出発地と目的地は別にしてください。", invalidDates:"有効な日付を選択してください。復路は往路より後です。", travelerWord:"名", travelersWord:"名", flexibleWord:"柔軟な日付" },
+      ko: { name:"한국어", kicker:"여행하는 학생을 위해", headlineAccent:"큰 여행.", headlineRest:"작은 항공료.", lede:"캠퍼스에서 세계 어디로든 노선을 비교하고 원하는 통화로 실시간 요금을 확인하세요.", proof:"비즈니스석이 아닌 학생 예산을 위해 만들었습니다.", searchTitle:"어디로 떠나나요?", searchSub:"100개 이상의 인기 공항을 검색하세요.", studentMode:"학생 모드", roundTrip:"왕복", oneWay:"편도", multiCity:"다구간", from:"출발", to:"도착", airportPlaceholder:"도시 또는 공항", depart:"출발일", return:"귀국일", travelers:"여행자", flexible:"날짜를 조정할 수 있어요", searchButton:"저렴한 항공편 비교", microcopy:"별도 예약 수수료가 없습니다. 실시간 결과로 이동합니다.", whyLabel:"01 / Farewell을 선택하는 이유", whyTitle:"여행에 더 많은 예산을.", whyText:"학생 친화적인 노선을 간단하게 비교하세요.", benefitOneTitle:"유연한 날짜", benefitOneText:"학기 방학 전후로 날짜를 바꿔 더 좋은 가격을 찾으세요.", benefitTwoTitle:"유학생을 위해", benefitTwoText:"전 세계 공항, 다양한 통화, 12개 언어.", benefitThreeTitle:"실시간 가격으로", benefitThreeText:"노선을 설정하고 현재 비교 결과를 여세요.", footer:"Farewell은 검색을 시작하며 예약은 제공업체에서 완료됩니다.", stamp:"가볍게 · 멀리", resultsKicker:"검색 준비 완료", resultsTitle:"실시간 요금을 확인하세요.", resultsNote:"현재 옵션을 비교하세요. 최종 가격은 제공업체에서 표시합니다.", continueButton:"실시간 결과 열기", invalidAirport:"공항을 선택하거나 유효한 3자리 공항 코드를 입력하세요.", sameAirport:"출발 공항과 도착 공항은 달라야 합니다.", invalidDates:"유효한 날짜를 선택하세요. 귀국일은 출발일 이후여야 합니다.", travelerWord:"명", travelersWord:"명", flexibleWord:"유연한 날짜" },
+      hi: { name:"हिन्दी", kicker:"यात्रा करने वाले छात्रों के लिए", headlineAccent:"बड़ी यात्राएँ।", headlineRest:"छोटे किराए।", lede:"कैंपस से दुनिया भर के मार्गों की तुलना करें और अपनी मुद्रा में लाइव किराए देखें।", proof:"बिज़नेस क्लास नहीं, छात्र बजट को ध्यान में रखकर बनाया गया।", searchTitle:"आप कहाँ जा रहे हैं?", searchSub:"100 से अधिक लोकप्रिय हवाई अड्डे खोजें।", studentMode:"छात्र मोड", roundTrip:"आना-जाना", oneWay:"एक तरफ", multiCity:"कई शहर", from:"कहाँ से", to:"कहाँ तक", airportPlaceholder:"शहर या हवाई अड्डा", depart:"प्रस्थान", return:"वापसी", travelers:"यात्री", flexible:"मेरी तारीखें लचीली हैं", searchButton:"किफायती उड़ानें खोजें", microcopy:"हम कोई बुकिंग शुल्क नहीं लेते। लाइव परिणाम देखें।", whyLabel:"01 / Farewell क्यों", whyTitle:"यात्रा के लिए अधिक पैसे।", whyText:"छात्रों के लिए उड़ान मार्गों की तुलना का आसान तरीका।", benefitOneTitle:"लचीली तारीखें", benefitOneText:"सेमेस्टर ब्रेक के आसपास तारीख बदलकर बेहतर मूल्य खोजें।", benefitTwoTitle:"अंतरराष्ट्रीय छात्रों के लिए", benefitTwoText:"वैश्विक हवाई अड्डे, कई मुद्राएँ और 12 भाषाएँ।", benefitThreeTitle:"सीधे लाइव कीमतें", benefitThreeText:"मार्ग चुनें और मौजूदा परिणाम खोलें।", footer:"Farewell खोज शुरू करता है। बुकिंग प्रदाता के साथ पूरी होती है।", stamp:"हल्का सामान · लंबी यात्रा", resultsKicker:"आपकी खोज तैयार है", resultsTitle:"लाइव किराए देखें।", resultsNote:"मौजूदा विकल्पों की तुलना करें। अंतिम कीमत प्रदाता दिखाता है।", continueButton:"लाइव परिणाम खोलें", invalidAirport:"सूची से हवाई अड्डा चुनें या मान्य 3-अक्षर कोड डालें।", sameAirport:"प्रस्थान और आगमन हवाई अड्डे अलग होने चाहिए।", invalidDates:"मान्य तारीखें चुनें। वापसी प्रस्थान के बाद होनी चाहिए।", travelerWord:"यात्री", travelersWord:"यात्री", flexibleWord:"लचीली तारीखें" },
+      ar: { name:"العربية", dir:"rtl", kicker:"للطلاب الذين يسافرون بعيدًا", headlineAccent:"رحلات كبيرة.", headlineRest:"أسعار أصغر.", lede:"قارن الرحلات من جامعتك إلى العالم واعرض الأسعار المباشرة بعملتك.", proof:"مصمم لميزانية الطلاب، وليس لدرجة رجال الأعمال.", searchTitle:"إلى أين تتجه؟", searchSub:"ابحث في أكثر من 100 مطار شهير.", studentMode:"وضع الطالب", roundTrip:"ذهاب وعودة", oneWay:"ذهاب فقط", multiCity:"مدن متعددة", from:"من", to:"إلى", airportPlaceholder:"المدينة أو المطار", depart:"المغادرة", return:"العودة", travelers:"المسافرون", flexible:"مواعيدي مرنة", searchButton:"قارن الرحلات الاقتصادية", microcopy:"لا نفرض رسوم حجز. انتقل إلى النتائج المباشرة.", whyLabel:"01 / لماذا Farewell", whyTitle:"مال أكثر للرحلة.", whyText:"طريقة بسيطة لمقارنة المسارات المناسبة للطلاب.", benefitOneTitle:"مواعيد مرنة", benefitOneText:"غيّر أيام السفر حول عطلات الفصل للعثور على سعر أفضل.", benefitTwoTitle:"للطلاب الدوليين", benefitTwoText:"مطارات عالمية وعملات متعددة و12 لغة.", benefitThreeTitle:"إلى الأسعار المباشرة", benefitThreeText:"حدد مسارك وافتح النتائج الحالية.", footer:"يساعد Farewell في بدء البحث. يتم الحجز مع مزود الخدمة.", stamp:"احزم القليل · سافر بعيدًا", resultsKicker:"بحثك جاهز", resultsTitle:"جاهز للأسعار المباشرة.", resultsNote:"قارن الخيارات الحالية. يعرض المزود السعر النهائي.", continueButton:"افتح النتائج المباشرة", invalidAirport:"اختر مطارًا أو أدخل رمز مطار صالحًا من ثلاثة أحرف.", sameAirport:"يجب أن يختلف مطار المغادرة عن الوصول.", invalidDates:"اختر تواريخ صالحة. يجب أن تكون العودة بعد المغادرة.", travelerWord:"مسافر", travelersWord:"مسافرين", flexibleWord:"مواعيد مرنة" },
+      tr: { name:"Türkçe", kicker:"Yola çıkan öğrenciler için", headlineAccent:"Büyük yolculuklar.", headlineRest:"Küçük ücretler.", lede:"Kampüsten dünyaya rotaları karşılaştır, canlı fiyatları kendi para biriminde gör.", proof:"Business class için değil, öğrenci bütçesi için.", searchTitle:"Nereye gidiyorsun?", searchSub:"100'den fazla popüler havalimanında ara.", studentMode:"Öğrenci modu", roundTrip:"Gidiş dönüş", oneWay:"Tek yön", multiCity:"Çok şehir", from:"Nereden", to:"Nereye", airportPlaceholder:"Şehir veya havalimanı", depart:"Gidiş", return:"Dönüş", travelers:"Yolcu", flexible:"Tarihlerim esnek", searchButton:"Uygun uçuşları karşılaştır", microcopy:"Bizden rezervasyon ücreti yok. Canlı sonuçlara geç.", whyLabel:"01 / Neden Farewell", whyTitle:"Yolculuk için daha çok para.", whyText:"Öğrenci dostu rotaları karşılaştırmanın kolay yolu.", benefitOneTitle:"Esnek tarihler", benefitOneText:"Dönem tatilleri çevresinde günleri değiştir.", benefitTwoTitle:"Uluslararası öğrenciler için", benefitTwoText:"Küresel havalimanları, çok sayıda para birimi ve 12 dil.", benefitThreeTitle:"Canlı fiyatlara geç", benefitThreeText:"Rotanı ayarla ve güncel sonuçları aç.", footer:"Farewell aramayı başlatır. Rezervasyon sağlayıcıda tamamlanır.", stamp:"Hafif topla · uzağa git", resultsKicker:"Araman hazır", resultsTitle:"Canlı fiyatlara hazır.", resultsNote:"Güncel seçenekleri karşılaştır. Son fiyatı sağlayıcı gösterir.", continueButton:"Canlı sonuçları aç", invalidAirport:"Listeden havalimanı seç veya geçerli 3 harfli kod gir.", sameAirport:"Kalkış ve varış havalimanları farklı olmalı.", invalidDates:"Geçerli tarihler seç. Dönüş gidişten sonra olmalı.", travelerWord:"yolcu", travelersWord:"yolcu", flexibleWord:"Esnek tarihler" },
+      ru: { name:"Русский", kicker:"Для студентов, готовых к путешествиям", headlineAccent:"Большие поездки.", headlineRest:"Меньше цены.", lede:"Сравнивайте маршруты от кампуса по всему миру и смотрите цены в своей валюте.", proof:"Для студенческого бюджета, а не бизнес-класса.", searchTitle:"Куда летим?", searchSub:"Поиск по более чем 100 популярным аэропортам.", studentMode:"Режим студента", roundTrip:"Туда и обратно", oneWay:"В одну сторону", multiCity:"Несколько городов", from:"Откуда", to:"Куда", airportPlaceholder:"Город или аэропорт", depart:"Вылет", return:"Возвращение", travelers:"Пассажиры", flexible:"Мои даты гибкие", searchButton:"Сравнить доступные рейсы", microcopy:"Без комиссии от нас. Переход к актуальным результатам.", whyLabel:"01 / Почему Farewell", whyTitle:"Больше денег на поездку.", whyText:"Простой способ сравнить удобные для студентов маршруты.", benefitOneTitle:"Гибкие даты", benefitOneText:"Сдвигайте даты вокруг каникул для лучшей цены.", benefitTwoTitle:"Для иностранных студентов", benefitTwoText:"Аэропорты мира, много валют и 12 языков.", benefitThreeTitle:"К актуальным ценам", benefitThreeText:"Задайте маршрут и откройте свежие результаты.", footer:"Farewell начинает поиск. Бронирование выполняется у поставщика.", stamp:"Легче багаж · дальше путь", resultsKicker:"Поиск готов", resultsTitle:"Актуальные цены готовы.", resultsNote:"Сравните текущие варианты. Итоговую цену показывает поставщик.", continueButton:"Открыть результаты", invalidAirport:"Выберите аэропорт или введите действительный трёхбуквенный код.", sameAirport:"Аэропорты вылета и прилёта должны отличаться.", invalidDates:"Выберите правильные даты. Возвращение должно быть позже.", travelerWord:"пассажир", travelersWord:"пассажира", flexibleWord:"Гибкие даты" }
+    };
+
+    const alsoCompareLabels = {
+      en: "Also compare on", es: "También compara en", fr: "Comparez aussi sur", de: "Auch vergleichen auf",
+      pt: "Compare também em", it: "Confronta anche su", zh: "也可以在这些网站比较", ja: "こちらでも比較できます",
+      ko: "여기서도 비교해보세요", hi: "यहाँ भी तुलना करें", ar: "قارن أيضًا على", tr: "Ayrıca şurada karşılaştır", ru: "Также сравните на"
+    };
+
+    const airportList = document.getElementById("airportList");
+    const airportValues = new Map();
+    airports.forEach(([code, city, name]) => {
+      const value = `${city} (${code})`;
+      airportValues.set(value.toLowerCase(), code);
+      airportValues.set(code.toLowerCase(), code);
+      const option = document.createElement("option");
+      option.value = value;
+      option.label = name;
+      airportList.appendChild(option);
+    });
+
+    const languageSelect = document.getElementById("languageSelect");
+    Object.entries(translations).forEach(([code, translation]) => {
+      const option = document.createElement("option");
+      option.value = code;
+      option.textContent = translation.name;
+      languageSelect.appendChild(option);
+    });
+
+    const currencySelect = document.getElementById("currencySelect");
+    currencies.forEach(([code, name]) => {
+      const option = document.createElement("option");
+      option.value = code;
+      option.textContent = `${code} · ${name}`;
+      currencySelect.appendChild(option);
+    });
+
+    const savedLanguage = localStorage.getItem("farewellLanguage");
+    const browserLanguage = navigator.language.slice(0, 2);
+    languageSelect.value = translations[savedLanguage] ? savedLanguage : (translations[browserLanguage] ? browserLanguage : "en");
+    currencySelect.value = localStorage.getItem("farewellCurrency") || "USD";
+    if (!currencies.some(([code]) => code === currencySelect.value)) currencySelect.value = "USD";
+
+    function applyLanguage(language) {
+      const text = translations[language] || translations.en;
+      document.documentElement.lang = language;
+      document.documentElement.dir = text.dir || "ltr";
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.dataset.i18n;
+        if (text[key]) element.textContent = text[key];
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+        const key = element.dataset.i18nPlaceholder;
+        if (text[key]) element.placeholder = text[key];
+      });
+      document.getElementById("alsoCompareLabel").textContent = alsoCompareLabels[language] || alsoCompareLabels.en;
+      localStorage.setItem("farewellLanguage", language);
+    }
+
+    applyLanguage(languageSelect.value);
+    languageSelect.addEventListener("change", () => applyLanguage(languageSelect.value));
+    currencySelect.addEventListener("change", () => localStorage.setItem("farewellCurrency", currencySelect.value));
+
+    const form = document.getElementById("flightForm");
+    const fromInput = document.getElementById("fromAirport");
+    const toInput = document.getElementById("toAirport");
+    const departInput = document.getElementById("departDate");
+    const returnInput = document.getElementById("returnDate");
+    const returnField = document.getElementById("returnField");
+    const errorBox = document.getElementById("formError");
+    const resultsPanel = document.getElementById("resultsPanel");
+
+    const today = new Date();
+    const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split("T")[0];
+    departInput.min = localToday;
+    returnInput.min = localToday;
+
+    departInput.addEventListener("change", () => {
+      returnInput.min = departInput.value || localToday;
+      if (returnInput.value && returnInput.value <= departInput.value) returnInput.value = "";
+    });
+
+    document.getElementById("swapAirports").addEventListener("click", () => {
+      const currentFrom = fromInput.value;
+      fromInput.value = toInput.value;
+      toInput.value = currentFrom;
+    });
+
+    document.querySelectorAll('input[name="tripType"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        const type = document.querySelector('input[name="tripType"]:checked').value;
+        const requiresReturn = type !== "oneway";
+        returnField.hidden = !requiresReturn;
+        returnInput.required = requiresReturn;
+        if (!requiresReturn) returnInput.value = "";
+      });
+    });
+
+    function getAirportCode(value) {
+      const normalized = value.trim().toLowerCase();
+      if (airportValues.has(normalized)) return airportValues.get(normalized);
+      const directCode = value.trim().toUpperCase();
+      return /^[A-Z]{3}$/.test(directCode) ? directCode : null;
+    }
+
+    function formatDate(value, language) {
+      return new Intl.DateTimeFormat(language, { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
+    }
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.hidden = false;
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      errorBox.hidden = true;
+      const language = languageSelect.value;
+      const text = translations[language] || translations.en;
+      const fromCode = getAirportCode(fromInput.value);
+      const toCode = getAirportCode(toInput.value);
+      const tripType = document.querySelector('input[name="tripType"]:checked').value;
+
+      if (!fromCode || !toCode) return showError(text.invalidAirport);
+      if (fromCode === toCode) return showError(text.sameAirport);
+      if (!departInput.value || departInput.value < localToday || (tripType !== "oneway" && (!returnInput.value || returnInput.value <= departInput.value))) return showError(text.invalidDates);
+
+      const compactDepart = departInput.value.replaceAll("-", "").slice(2);
+      const compactReturn = returnInput.value.replaceAll("-", "").slice(2);
+      let path = `https://www.skyscanner.com/transport/flights/${fromCode.toLowerCase()}/${toCode.toLowerCase()}/${compactDepart}/`;
+      if (tripType !== "oneway") path += `${compactReturn}/`;
+      const query = new URLSearchParams({ adults: document.getElementById("passengers").value, adultsv2: document.getElementById("passengers").value, cabinclass: "economy", currency: currencySelect.value });
+      if (document.getElementById("flexibleDates").checked) query.set("preferdirects", "false");
+
+      document.getElementById("resultFrom").textContent = fromCode;
+      document.getElementById("resultTo").textContent = toCode;
+      document.getElementById("resultDates").textContent = tripType === "oneway" ? formatDate(departInput.value, language) : `${formatDate(departInput.value, language)} – ${formatDate(returnInput.value, language)}`;
+      const travelerCount = Number(document.getElementById("passengers").value);
+      document.getElementById("resultTravelers").textContent = `${travelerCount} ${travelerCount === 1 ? text.travelerWord : text.travelersWord}`;
+      document.getElementById("resultCurrency").textContent = currencySelect.value + (document.getElementById("flexibleDates").checked ? ` · ${text.flexibleWord}` : "");
+      document.getElementById("compareLink").href = `${path}?${query.toString()}`;
+
+      // Fetch a recent cached price via our serverless function (keeps the API token secret).
+      const pricePreview = document.getElementById("pricePreview");
+      const pricePreviewLoading = document.getElementById("pricePreviewLoading");
+      const pricePreviewResult = document.getElementById("pricePreviewResult");
+      pricePreview.hidden = false;
+      pricePreviewLoading.hidden = false;
+      pricePreviewResult.hidden = true;
+
+      fetch(`/get-prices?origin=${fromCode}&destination=${toCode}&currency=${currencySelect.value}`)
+        .then((r) => r.json())
+        .then((data) => {
+          pricePreviewLoading.hidden = true;
+          if (data.success) {
+            document.getElementById("pricePreviewAmount").textContent = `${data.price} ${data.currency}`;
+            document.getElementById("pricePreviewNote").textContent = data.found_note;
+            pricePreviewResult.hidden = false;
+          } else {
+            pricePreview.hidden = true; // no cached data for this route — just show the redirect buttons
+          }
+        })
+        .catch(() => {
+          pricePreview.hidden = true;
+        });
+
+      // ---- AFFILIATE CONFIG ----
+      // Kayak: free to join via CJ Affiliate (cj.com). Once approved, CJ gives you a
+      // "PID" and a link-wrapping format from their dashboard (Product Widgets / Links tool).
+      // Paste that wrapping format here — for now this is a plain, non-monetized link.
+      const KAYAK_CJ_WRAP = null; // e.g. (url) => `https://www.dpbolvw.net/click-XXXXXXX-XXXXXXX?url=${encodeURIComponent(url)}`
+
+      // Kiwi.com: free to join via Travelpayouts (travelpayouts.com). Once approved,
+      // your dashboard gives you a "marker" ID and exact link-wrapping instructions.
+      // Paste that wrapping format here — for now this is a plain, non-monetized link.
+      const KIWI_TP_WRAP = null; // e.g. (url) => `https://tp.media/click?shmarker=YOUR_MARKER&url=${encodeURIComponent(url)}`
+
+      // Google Flights: no affiliate program exists for this — always a plain link.
+      const departPretty = formatDate(departInput.value, "en");
+      let gfQuery = `Flights from ${fromCode} to ${toCode} on ${departPretty}`;
+      if (tripType !== "oneway") gfQuery += ` through ${formatDate(returnInput.value, "en")}`;
+      document.getElementById("googleFlightsLink").href = `https://www.google.com/travel/flights?q=${encodeURIComponent(gfQuery)}&curr=${currencySelect.value}`;
+
+      // Kayak: /flights/FROM-TO/depart/return
+      let kayakTarget = `https://www.kayak.com/flights/${fromCode}-${toCode}/${departInput.value}`;
+      if (tripType !== "oneway") kayakTarget += `/${returnInput.value}`;
+      kayakTarget += `?sort=bestflight_a&currency=${currencySelect.value}`;
+      document.getElementById("kayakLink").href = KAYAK_CJ_WRAP ? KAYAK_CJ_WRAP(kayakTarget) : kayakTarget;
+
+      // Kiwi.com: correct deep-link format is /deep?from=X&to=Y&departure=YYYY-MM-DD&return=YYYY-MM-DD
+      let kiwiTarget = `https://www.kiwi.com/deep?from=${fromCode}&to=${toCode}&departure=${departInput.value}`;
+      if (tripType !== "oneway") kiwiTarget += `&return=${returnInput.value}`;
+      kiwiTarget += `&currency=${currencySelect.value}`;
+      document.getElementById("kiwiLink").href = KIWI_TP_WRAP ? KIWI_TP_WRAP(kiwiTarget) : kiwiTarget;
+
+      resultsPanel.hidden = false;
+      document.body.style.overflow = "hidden";
+      document.getElementById("closeResults").focus();
+    });
+
+    function closeResults() {
+      resultsPanel.hidden = true;
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("closeResults").addEventListener("click", closeResults);
+    resultsPanel.addEventListener("click", (event) => { if (event.target === resultsPanel) closeResults(); });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !resultsPanel.hidden) closeResults(); });
+  </script>
+</body>
+</html>
