@@ -1,4 +1,3 @@
-<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -462,7 +461,8 @@
     .compare-link svg { width: 19px; }
 
     .also-compare-label { margin: 20px 0 10px; font-family: "DM Mono", monospace; font-size: .72rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: rgba(21, 42, 57, .55); }
-    .compare-links-secondary { display: grid; gap: 9px; }
+    .compare-links-secondary { display: grid; gap: 9px; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 500px) { .compare-links-secondary { grid-template-columns: 1fr; } }
     .compare-link-secondary {
       min-height: 50px;
       display: flex;
@@ -589,7 +589,7 @@
           <div class="card-head">
             <div>
               <h2 data-i18n="searchTitle">Where are you headed?</h2>
-              <p data-i18n="searchSub">Search 70+ popular student airports.</p>
+              <p data-i18n="searchSub">Search all major global airports.</p>
             </div>
             <span class="student-tag">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="m3 9 9-5 9 5-9 5-9-5Z" stroke="currentColor" stroke-width="2"/><path d="M7 12v5c3 2 7 2 10 0v-5" stroke="currentColor" stroke-width="2"/></svg>
@@ -741,6 +741,10 @@
           <span>Google Flights</span>
           <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
+        <a class="compare-link-secondary" id="expediaLink" href="#" target="_blank" rel="noopener noreferrer">
+          <span>Expedia</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
         <a class="compare-link-secondary" id="kayakLink" href="#" target="_blank" rel="noopener noreferrer">
           <span>Kayak</span>
           <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -749,19 +753,37 @@
           <span>Kiwi.com</span>
           <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
+        <a class="compare-link-secondary" id="flixbusLink" href="#" target="_blank" rel="noopener noreferrer">
+          <span>FlixBus</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </div>
     </div>
   </section>
 
   <script>
     const airports = [
+      // North America & Caribbean
       ["ATL","Atlanta","Hartsfield–Jackson"],["AUS","Austin","Austin–Bergstrom"],["BOS","Boston","Logan"],["BWI","Baltimore","Baltimore/Washington"],["CLT","Charlotte","Douglas"],["DCA","Washington, D.C.","Reagan"],["DEN","Denver","Denver International"],["DFW","Dallas","Dallas/Fort Worth"],["DTW","Detroit","Metropolitan Wayne"],["EWR","Newark","Newark Liberty"],["FLL","Fort Lauderdale","Fort Lauderdale–Hollywood"],["IAD","Washington, D.C.","Dulles"],["IAH","Houston","George Bush"],["JFK","New York","John F. Kennedy"],["LAS","Las Vegas","Harry Reid"],["LAX","Los Angeles","Los Angeles International"],["MCO","Orlando","Orlando International"],["MIA","Miami","Miami International"],["MSP","Minneapolis","Saint Paul"],["ORD","Chicago","O'Hare"],["PDX","Portland","Portland International"],["PHL","Philadelphia","Philadelphia International"],["PHX","Phoenix","Sky Harbor"],["SAN","San Diego","San Diego International"],["SEA","Seattle","Seattle–Tacoma"],["SFO","San Francisco","San Francisco International"],["SJC","San Jose","Norman Y. Mineta"],["SLC","Salt Lake City","Salt Lake City International"],["TPA","Tampa","Tampa International"],
-      ["YYZ","Toronto","Pearson"],["YVR","Vancouver","Vancouver International"],["YUL","Montréal","Montréal–Trudeau"],["MEX","Mexico City","Benito Juárez"],["CUN","Cancún","Cancún International"],["GRU","São Paulo","Guarulhos"],["GIG","Rio de Janeiro","Galeão"],["BOG","Bogotá","El Dorado"],["LIM","Lima","Jorge Chávez"],["SCL","Santiago","Arturo Merino Benítez"],["EZE","Buenos Aires","Ezeiza"],
+      ["YYZ","Toronto","Pearson"],["YVR","Vancouver","Vancouver International"],["YUL","Montréal","Montréal–Trudeau"],["MEX","Mexico City","Benito Juárez"],["CUN","Cancún","Cancún International"],
+      ["HAV","Havana","José Martí"],["NAS","Nassau","Lynden Pindling"],["KIN","Kingston","Norman Manley"],["PAP","Port-au-Prince","Toussaint Louverture"],["SDQ","Santo Domingo","Las Américas"],["SJU","San Juan","Luis Muñoz Marín"],["POS","Port of Spain","Piarco"],
+      // Central & South America
+      ["GUA","Guatemala City","La Aurora"],["BZE","Belize City","Philip S. W. Goldson"],["SAL","San Salvador","El Salvador International"],["TGU","Tegucigalpa","Toncontín"],["MGA","Managua","Augusto C. Sandino"],["SJO","San José","Juan Santamaría"],["PTY","Panama City","Tocumen"],
+      ["GRU","São Paulo","Guarulhos"],["GIG","Rio de Janeiro","Galeão"],["BOG","Bogotá","El Dorado"],["LIM","Lima","Jorge Chávez"],["SCL","Santiago","Arturo Merino Benítez"],["EZE","Buenos Aires","Ezeiza"],["UIO","Quito","Mariscal Sucre"],["LPB","La Paz","El Alto"],["ASU","Asunción","Silvio Pettirossi"],["MVD","Montevideo","Carrasco"],["CCS","Caracas","Simón Bolívar"],["GEO","Georgetown","Cheddi Jagan"],["PBM","Paramaribo","Johan Adolf Pengel"],
+      // Europe
       ["LHR","London","Heathrow"],["LGW","London","Gatwick"],["MAN","Manchester","Manchester Airport"],["EDI","Edinburgh","Edinburgh Airport"],["DUB","Dublin","Dublin Airport"],["CDG","Paris","Charles de Gaulle"],["ORY","Paris","Orly"],["AMS","Amsterdam","Schiphol"],["FRA","Frankfurt","Frankfurt Airport"],["MUC","Munich","Munich Airport"],["BER","Berlin","Brandenburg"],["MAD","Madrid","Adolfo Suárez"],["BCN","Barcelona","El Prat"],["LIS","Lisbon","Humberto Delgado"],["FCO","Rome","Fiumicino"],["MXP","Milan","Malpensa"],["VIE","Vienna","Vienna International"],["ZRH","Zürich","Zürich Airport"],["CPH","Copenhagen","Kastrup"],["ARN","Stockholm","Arlanda"],["OSL","Oslo","Gardermoen"],["ATH","Athens","Athens International"],["IST","Istanbul","Istanbul Airport"],["WAW","Warsaw","Chopin"],["PRG","Prague","Václav Havel"],["BUD","Budapest","Ferenc Liszt"],
+      ["HEL","Helsinki","Helsinki-Vantaa"],["RIX","Riga","Riga International"],["TLL","Tallinn","Tallinn Airport"],["VNO","Vilnius","Vilnius Airport"],["MSQ","Minsk","Minsk National"],["OTP","Bucharest","Henri Coandă"],["SOF","Sofia","Sofia Airport"],["BEG","Belgrade","Nikola Tesla"],["SJJ","Sarajevo","Sarajevo International"],["TIA","Tirana","Tirana International"],["SKP","Skopje","Skopje International"],["LJU","Ljubljana","Jože Pučnik"],["ZAG","Zagreb","Franjo Tuđman"],["KBP","Kyiv","Boryspil"],
+      // Middle East & Africa
       ["DXB","Dubai","Dubai International"],["DOH","Doha","Hamad International"],["AUH","Abu Dhabi","Zayed International"],["CAI","Cairo","Cairo International"],["CMN","Casablanca","Mohammed V"],["ACC","Accra","Kotoka"],["LOS","Lagos","Murtala Muhammed"],["NBO","Nairobi","Jomo Kenyatta"],["JNB","Johannesburg","O. R. Tambo"],["CPT","Cape Town","Cape Town International"],["ADD","Addis Ababa","Bole"],
+      ["BGW","Baghdad","Baghdad International"],["KWI","Kuwait City","Kuwait International"],["MCT","Muscat","Muscat International"],["AMM","Amman","Queen Alia"],["BEY","Beirut","Rafic Hariri"],["TLV","Tel Aviv","Ben Gurion"],["RUH","Riyadh","King Khalid"],["JED","Jeddah","King Abdulaziz"],
+      ["ALG","Algiers","Houari Boumediene"],["TUN","Tunis","Carthage"],["TIP","Tripoli","Mitiga"],["KRT","Khartoum","Khartoum International"],["JIB","Djibouti City","Ambouli"],["EBB","Entebbe","Entebbe International"],["KGL","Kigali","Kigali International"],["DAR","Dar es Salaam","Julius Nyerere"],["LUN","Lusaka","Kenneth Kaunda"],["HRE","Harare","Robert Gabriel Mugabe"],["GBE","Gaborone","Sir Seretse Khama"],["WDH","Windhoek","Hosea Kutako"],["MPM","Maputo","Maputo International"],["TNR","Antananarivo","Ivato"],["MRU","Port Louis","Sir Seewoosagur Ramgoolam"],["DKR","Dakar","Blaise Diagne"],["BKO","Bamako","Modibo Keita"],["OUA","Ouagadougou","Thomas Sankara"],["NIM","Niamey","Diori Hamani"],["NDJ","N'Djamena","Hassan Djamous"],["DLA","Douala","Douala International"],["LBV","Libreville","Léon-Mba"],["LAD","Luanda","Quatro de Fevereiro"],["FIH","Kinshasa","N'djili"],
+      // Asia
       ["DEL","Delhi","Indira Gandhi"],["BOM","Mumbai","Chhatrapati Shivaji"],["BLR","Bengaluru","Kempegowda"],["HYD","Hyderabad","Rajiv Gandhi"],["MAA","Chennai","Chennai International"],["CCU","Kolkata","Netaji Subhas Chandra Bose"],["DAC","Dhaka","Hazrat Shahjalal"],["KHI","Karachi","Jinnah"],["LHE","Lahore","Allama Iqbal"],["ISB","Islamabad","Islamabad International"],["CMB","Colombo","Bandaranaike"],["KTM","Kathmandu","Tribhuvan"],
       ["SIN","Singapore","Changi"],["KUL","Kuala Lumpur","Kuala Lumpur International"],["BKK","Bangkok","Suvarnabhumi"],["HKG","Hong Kong","Hong Kong International"],["PEK","Beijing","Capital"],["PVG","Shanghai","Pudong"],["CAN","Guangzhou","Baiyun"],["NRT","Tokyo","Narita"],["HND","Tokyo","Haneda"],["ICN","Seoul","Incheon"],["TPE","Taipei","Taoyuan"],["MNL","Manila","Ninoy Aquino"],["CGK","Jakarta","Soekarno–Hatta"],["SGN","Ho Chi Minh City","Tân Sơn Nhất"],["HAN","Hanoi","Nội Bài"],
-      ["SYD","Sydney","Kingsford Smith"],["MEL","Melbourne","Melbourne Airport"],["BNE","Brisbane","Brisbane Airport"],["PER","Perth","Perth Airport"],["AKL","Auckland","Auckland Airport"]
+      ["KBL","Kabul","Kabul International"],["GYD","Baku","Heydar Aliyev"],["EVN","Yerevan","Zvartnots"],["TBS","Tbilisi","Shota Rustaveli"],["ALA","Almaty","Almaty International"],["TAS","Tashkent","Islam Karimov"],["ASB","Ashgabat","Ashgabat International"],["DYU","Dushanbe","Dushanbe International"],["FRU","Bishkek","Manas"],["UBN","Ulaanbaatar","Chinggis Khaan"],["PNH","Phnom Penh","Phnom Penh International"],["VTE","Vientiane","Wattay"],["RGN","Yangon","Yangon International"],["BWN","Bandar Seri Begawan","Brunei International"],["DIL","Dili","Presidente Nicolau Lobato"],
+      // Oceania
+      ["SYD","Sydney","Kingsford Smith"],["MEL","Melbourne","Melbourne Airport"],["BNE","Brisbane","Brisbane Airport"],["PER","Perth","Perth Airport"],["AKL","Auckland","Auckland Airport"],
+      ["NAN","Nadi","Nadi International"],["NOU","Nouméa","La Tontouta"],["PPT","Papeete","Faa'a International"],["APW","Apia","Faleolo"],["TBU","Nukuʻalofa","Fuaʻamotu"],["VLI","Port Vila","Bauerfield"],["POM","Port Moresby","Jacksons International"]
     ];
 
     const currencies = [
@@ -769,7 +791,7 @@
     ];
 
     const translations = {
-      en: { name:"English", kicker:"Made for students going places", headlineAccent:"Big trips.", headlineRest:"Smaller fares.", lede:"Compare routes from campus to anywhere, then jump to live fares in your chosen currency.", proof:"Built around student budgets, not business class.", searchTitle:"Where are you headed?", searchSub:"Search 100+ popular student airports.", studentMode:"Student mode", roundTrip:"Round trip", oneWay:"One way", multiCity:"Multi-city", from:"From", to:"To", airportPlaceholder:"City or airport", depart:"Depart", return:"Return", travelers:"Travelers", flexible:"My dates are flexible — show nearby days", searchButton:"Compare affordable flights", microcopy:"No booking fees from us. We send you to live provider results.", whyLabel:"01 / Why Farewell", whyTitle:"More money for the trip.", whyText:"A simple launchpad for comparing student-friendly routes without wrestling with confusing travel sites.", benefitOneTitle:"Flexible-date friendly", benefitOneText:"Shift your travel days and look around semester breaks for better value.", benefitTwoTitle:"Built for international students", benefitTwoText:"Choose from major university hubs, global currencies, and 13 interface languages.", benefitThreeTitle:"Straight to live prices", benefitThreeText:"Set your route once, then continue to current comparison results when you are ready.", footer:"Farewell helps students start a flight search. Prices and bookings are completed with the comparison provider.", stamp:"Pack light · go far", resultsKicker:"Your search is packed", resultsTitle:"Ready for live fares.", resultsNote:"Continue to compare current airline and agency options. The final price is shown by the provider.", continueButton:"Open live flight results", invalidAirport:"Choose an airport from the list or enter a valid 3-letter airport code.", sameAirport:"Departure and arrival airports must be different.", invalidDates:"Choose valid travel dates. Your return must be after departure.", travelerWord:"traveler", travelersWord:"travelers", flexibleWord:"Flexible dates" },
+      en: { name:"English", kicker:"Made for students going places", headlineAccent:"Big trips.", headlineRest:"Smaller fares.", lede:"Compare routes from campus to anywhere, then jump to live fares in your chosen currency.", proof:"Built around student budgets, not business class.", searchTitle:"Where are you headed?", searchSub:"Search all major global airports.", studentMode:"Student mode", roundTrip:"Round trip", oneWay:"One way", multiCity:"Multi-city", from:"From", to:"To", airportPlaceholder:"City or airport", depart:"Depart", return:"Return", travelers:"Travelers", flexible:"My dates are flexible — show nearby days", searchButton:"Compare affordable flights", microcopy:"No booking fees from us. We send you to live provider results.", whyLabel:"01 / Why Farewell", whyTitle:"More money for the trip.", whyText:"A simple launchpad for comparing student-friendly routes without wrestling with confusing travel sites.", benefitOneTitle:"Flexible-date friendly", benefitOneText:"Shift your travel days and look around semester breaks for better value.", benefitTwoTitle:"Built for international students", benefitTwoText:"Choose from major university hubs, global currencies, and 13 interface languages.", benefitThreeTitle:"Straight to live prices", benefitThreeText:"Set your route once, then continue to current comparison results when you are ready.", footer:"Farewell helps students start a flight search. Prices and bookings are completed with the comparison provider.", stamp:"Pack light · go far", resultsKicker:"Your search is packed", resultsTitle:"Ready for live fares.", resultsNote:"Continue to compare current airline and agency options. The final price is shown by the provider.", continueButton:"Open live flight results", invalidAirport:"Choose an airport from the list or enter a valid 3-letter airport code.", sameAirport:"Departure and arrival airports must be different.", invalidDates:"Choose valid travel dates. Your return must be after departure.", travelerWord:"traveler", travelersWord:"travelers", flexibleWord:"Flexible dates" },
       es: { name:"Español", kicker:"Hecho para estudiantes viajeros", headlineAccent:"Grandes viajes.", headlineRest:"Tarifas pequeñas.", lede:"Compara rutas desde tu campus a cualquier lugar y consulta precios en tu moneda.", proof:"Pensado para presupuestos estudiantiles, no para clase ejecutiva.", searchTitle:"¿A dónde vas?", searchSub:"Busca en más de 100 aeropuertos populares.", studentMode:"Modo estudiante", roundTrip:"Ida y vuelta", oneWay:"Solo ida", multiCity:"Varias ciudades", from:"Desde", to:"Hasta", airportPlaceholder:"Ciudad o aeropuerto", depart:"Salida", return:"Regreso", travelers:"Viajeros", flexible:"Mis fechas son flexibles", searchButton:"Comparar vuelos económicos", microcopy:"Sin cargos nuestros. Te llevamos a resultados en vivo.", whyLabel:"01 / Por qué Farewell", whyTitle:"Más dinero para el viaje.", whyText:"Una forma sencilla de comparar rutas para estudiantes.", benefitOneTitle:"Fechas flexibles", benefitOneText:"Cambia tus días y busca cerca de las vacaciones académicas.", benefitTwoTitle:"Para estudiantes internacionales", benefitTwoText:"Aeropuertos globales, muchas monedas y 12 idiomas.", benefitThreeTitle:"Precios en vivo", benefitThreeText:"Configura tu ruta y abre resultados actuales.", footer:"Farewell inicia tu búsqueda. La reserva se completa con el proveedor.", stamp:"Viaja ligero · llega lejos", resultsKicker:"Tu búsqueda está lista", resultsTitle:"Listo para ver tarifas.", resultsNote:"Continúa para comparar opciones actuales. El proveedor muestra el precio final.", continueButton:"Abrir resultados en vivo", invalidAirport:"Elige un aeropuerto de la lista o escribe un código válido de 3 letras.", sameAirport:"Los aeropuertos deben ser diferentes.", invalidDates:"Elige fechas válidas. El regreso debe ser posterior.", travelerWord:"viajero", travelersWord:"viajeros", flexibleWord:"Fechas flexibles" },
       fr: { name:"Français", kicker:"Pour les étudiants qui voyagent", headlineAccent:"Grands voyages.", headlineRest:"Petits prix.", lede:"Comparez des itinéraires depuis votre campus et consultez les tarifs dans votre devise.", proof:"Pensé pour les budgets étudiants, pas la classe affaires.", searchTitle:"Où allez-vous ?", searchSub:"Recherchez plus de 100 aéroports étudiants.", studentMode:"Mode étudiant", roundTrip:"Aller-retour", oneWay:"Aller simple", multiCity:"Multi-destinations", from:"De", to:"À", airportPlaceholder:"Ville ou aéroport", depart:"Départ", return:"Retour", travelers:"Voyageurs", flexible:"Mes dates sont flexibles", searchButton:"Comparer les vols abordables", microcopy:"Aucuns frais de notre part. Accédez aux résultats en direct.", whyLabel:"01 / Pourquoi Farewell", whyTitle:"Plus d’argent pour le voyage.", whyText:"Un point de départ simple pour comparer les itinéraires étudiants.", benefitOneTitle:"Dates flexibles", benefitOneText:"Décalez vos dates autour des vacances universitaires.", benefitTwoTitle:"Pour les étudiants internationaux", benefitTwoText:"Aéroports mondiaux, nombreuses devises et 12 langues.", benefitThreeTitle:"Prix en direct", benefitThreeText:"Définissez votre trajet puis ouvrez les résultats actuels.", footer:"Farewell lance votre recherche. La réservation se fait chez le fournisseur.", stamp:"Voyagez léger · allez loin", resultsKicker:"Votre recherche est prête", resultsTitle:"Prêt pour les tarifs.", resultsNote:"Comparez les options actuelles. Le prix final est affiché par le fournisseur.", continueButton:"Ouvrir les résultats", invalidAirport:"Choisissez un aéroport ou saisissez un code valide à 3 lettres.", sameAirport:"Les aéroports doivent être différents.", invalidDates:"Choisissez des dates valides. Le retour doit suivre le départ.", travelerWord:"voyageur", travelersWord:"voyageurs", flexibleWord:"Dates flexibles" },
       de: { name:"Deutsch", kicker:"Für Studierende mit Fernweh", headlineAccent:"Große Reisen.", headlineRest:"Kleine Preise.", lede:"Vergleiche Strecken vom Campus in die Welt und öffne Live-Preise in deiner Währung.", proof:"Für studentische Budgets, nicht für Business Class.", searchTitle:"Wohin geht es?", searchSub:"Durchsuche über 100 beliebte Flughäfen.", studentMode:"Studentenmodus", roundTrip:"Hin und zurück", oneWay:"Nur Hinflug", multiCity:"Mehrere Städte", from:"Von", to:"Nach", airportPlaceholder:"Stadt oder Flughafen", depart:"Abflug", return:"Rückflug", travelers:"Reisende", flexible:"Meine Daten sind flexibel", searchButton:"Günstige Flüge vergleichen", microcopy:"Keine Gebühren von uns. Weiter zu Live-Ergebnissen.", whyLabel:"01 / Warum Farewell", whyTitle:"Mehr Geld für die Reise.", whyText:"Ein einfacher Startpunkt für studentische Flugrouten.", benefitOneTitle:"Flexible Reisedaten", benefitOneText:"Verschiebe deine Tage rund um die Semesterferien.", benefitTwoTitle:"Für internationale Studierende", benefitTwoText:"Globale Flughäfen, viele Währungen und 12 Sprachen.", benefitThreeTitle:"Direkt zu Live-Preisen", benefitThreeText:"Route festlegen und aktuelle Ergebnisse öffnen.", footer:"Farewell startet die Suche. Buchung und Preise kommen vom Anbieter.", stamp:"Leicht packen · weit reisen", resultsKicker:"Deine Suche ist bereit", resultsTitle:"Bereit für Live-Preise.", resultsNote:"Vergleiche aktuelle Optionen. Den Endpreis zeigt der Anbieter.", continueButton:"Live-Ergebnisse öffnen", invalidAirport:"Wähle einen Flughafen oder gib einen gültigen 3-Buchstaben-Code ein.", sameAirport:"Start und Ziel müssen verschieden sein.", invalidDates:"Wähle gültige Daten. Der Rückflug muss später sein.", travelerWord:"Reisender", travelersWord:"Reisende", flexibleWord:"Flexible Daten" },
@@ -903,6 +925,7 @@
       const fromCode = getAirportCode(fromInput.value);
       const toCode = getAirportCode(toInput.value);
       const tripType = document.querySelector('input[name="tripType"]:checked').value;
+      const passengerCount = document.getElementById("passengers").value;
 
       if (!fromCode || !toCode) return showError(text.invalidAirport);
       if (fromCode === toCode) return showError(text.sameAirport);
@@ -912,13 +935,13 @@
       const compactReturn = returnInput.value.replaceAll("-", "").slice(2);
       let path = `https://www.skyscanner.com/transport/flights/${fromCode.toLowerCase()}/${toCode.toLowerCase()}/${compactDepart}/`;
       if (tripType !== "oneway") path += `${compactReturn}/`;
-      const query = new URLSearchParams({ adults: document.getElementById("passengers").value, adultsv2: document.getElementById("passengers").value, cabinclass: "economy", currency: currencySelect.value });
+      const query = new URLSearchParams({ adults: passengerCount, adultsv2: passengerCount, cabinclass: "economy", currency: currencySelect.value });
       if (document.getElementById("flexibleDates").checked) query.set("preferdirects", "false");
 
       document.getElementById("resultFrom").textContent = fromCode;
       document.getElementById("resultTo").textContent = toCode;
       document.getElementById("resultDates").textContent = tripType === "oneway" ? formatDate(departInput.value, language) : `${formatDate(departInput.value, language)} – ${formatDate(returnInput.value, language)}`;
-      const travelerCount = Number(document.getElementById("passengers").value);
+      const travelerCount = Number(passengerCount);
       document.getElementById("resultTravelers").textContent = `${travelerCount} ${travelerCount === 1 ? text.travelerWord : text.travelersWord}`;
       document.getElementById("resultCurrency").textContent = currencySelect.value + (document.getElementById("flexibleDates").checked ? ` · ${text.flexibleWord}` : "");
       document.getElementById("compareLink").href = `${path}?${query.toString()}`;
@@ -975,6 +998,16 @@
       if (tripType !== "oneway") kiwiTarget += `&return=${returnInput.value}`;
       kiwiTarget += `&currency=${currencySelect.value}`;
       document.getElementById("kiwiLink").href = KIWI_TP_WRAP ? KIWI_TP_WRAP(kiwiTarget) : kiwiTarget;
+
+      // Expedia
+      let expediaTarget = `https://www.expedia.com/Flights-Search?trip=${tripType === "oneway" ? "oneway" : "roundtrip"}&leg1=from:${fromCode},to:${toCode},departure:${departInput.value.replace(/-/g, '/')}&passengers=adults:${passengerCount}`;
+      if (tripType !== "oneway") expediaTarget += `&leg2=from:${toCode},to:${fromCode},departure:${returnInput.value.replace(/-/g, '/')}`;
+      document.getElementById("expediaLink").href = expediaTarget;
+
+      // FlixBus (Drops users onto the search page with URL parameters passed)
+      const departReversed = departInput.value.split("-").reverse().join("."); // FlixBus uses DD.MM.YYYY
+      let flixTarget = `https://www.flixbus.com/?departureCity=${airportValues.get(fromCode.toLowerCase()) || fromCode}&arrivalCity=${airportValues.get(toCode.toLowerCase()) || toCode}&rideDate=${departReversed}`;
+      document.getElementById("flixbusLink").href = flixTarget;
 
       resultsPanel.hidden = false;
       document.body.style.overflow = "hidden";
